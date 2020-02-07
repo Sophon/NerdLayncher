@@ -21,11 +21,27 @@ class NerdLauncherActivity : AppCompatActivity() {
 
         recyclerView = findViewById(R.id.app_recycler_view)
         recyclerView.layoutManager = LinearLayoutManager(this)
+
+        setupAdapter()
     }
 
     //=====
 
-    private fun setupAdapter() {}
+    private fun setupAdapter() {
+        val startupIntentFilter = Intent(Intent.ACTION_MAIN).apply {
+            addCategory(Intent.CATEGORY_LAUNCHER)
+        }
+
+        val activities = packageManager.queryIntentActivities(startupIntentFilter, 0)
+        activities.sortWith(Comparator { act1, act2 ->
+            String.CASE_INSENSITIVE_ORDER.compare(
+                act1.loadLabel(packageManager).toString(),
+                act2.loadLabel(packageManager).toString()
+            )
+        })
+
+        recyclerView.adapter = ActivityAdapter(activities)
+    }
 
     //=====
 
