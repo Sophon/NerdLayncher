@@ -70,6 +70,7 @@ class NerdLauncherActivity : AppCompatActivity() {
                     activityInfo.packageName,
                     activityInfo.name
                 )
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }
 
             val context = view.context
