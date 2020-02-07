@@ -1,11 +1,13 @@
 package com.bignerdranch.android.nerdlauncher
 
+import android.content.Intent
 import android.content.pm.ResolveInfo
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
@@ -29,7 +31,36 @@ class NerdLauncherActivity : AppCompatActivity() {
 
     private inner class ActivityHolder(itemView: View)
         : RecyclerView.ViewHolder(itemView),
-        View.OnClickListener {}
+        View.OnClickListener {
+
+        private val nameTextView = itemView as TextView
+        private lateinit var resolveInfo: ResolveInfo
+
+        init {
+            nameTextView.setOnClickListener(this)
+        }
+
+        fun bindActivity(resolveInfo: ResolveInfo) {
+            this.resolveInfo = resolveInfo
+            val packageManager = itemView.context.packageManager
+            nameTextView.text = resolveInfo.loadLabel(packageManager).toString()
+        }
+
+        override fun onClick(view: View) {
+            val activityInfo = resolveInfo.activityInfo
+
+            val intent = Intent(Intent.ACTION_MAIN).apply {
+                setClassName(
+                    activityInfo.packageName,
+                    activityInfo.name
+                )
+            }
+
+            val context = view.context
+
+            context.startActivity(intent)
+        }
+    }
 
     private inner class ActivityAdapter(val activities: List<ResolveInfo>)
         : RecyclerView.Adapter<ActivityHolder>() {
